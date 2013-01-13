@@ -2,7 +2,9 @@
 # Cookbook Name:: blockstep
 # Recipe:: default
 #
-# Copyright 2013, YOUR_COMPANY_NAME
+# Copyright 2013, Will O'Brien
 #
 # All rights reserved - Do Not Redistribute
 #
+
+
