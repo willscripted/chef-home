@@ -1,3 +1,45 @@
 [submodule "cookbooks/application_nginx"]
 	path = cookbooks/application_nginx
-	url = git://github.com/opscode-cookbooks/application_nginx
+	url = git://github.com/opscode-cookbooks/application_nginx.git
+[submodule "cookbooks/nginx"]
+	path = cookbooks/nginx
+	url = git://github.com/opscode-cookbooks/nginx.git
+[submodule "cookbooks/build-essential"]
+	path = cookbooks/build-essential
+	url = git://github.com/opscode-cookbooks/build-essential.git
+[submodule "cookbooks/ohai"]
+	path = cookbooks/ohai
+	url = git://github.com/opscode-cookbooks/ohai.git
+[submodule "cookbooks/git"]
+	path = cookbooks/git
+	url = git://github.com/opscode-cookbooks/git.git
+[submodule "cookbooks/application_ruby"]
+	path = cookbooks/application_ruby
+	url = git://github.com/opscode-cookbooks/application_ruby.git
+[submodule "cookbooks/runit"]
+	path = cookbooks/runit
+	url = git://github.com/opscode-cookbooks/runit.git
+[submodule "cookbooks/windows"]
+	path = cookbooks/windows
+	url = git://github.com/opscode-cookbooks/windows.git
+[submodule "cookbooks/dmg"]
+	path = cookbooks/dmg
+	url = git://github.com/opscode-cookbooks/dmg.git
+[submodule "cookbooks/powershell"]
+	path = cookbooks/powershell
+	url = git://github.com/opscode-cookbooks/powershell.git
+[submodule "cookbooks/chef_handler"]
+	path = cookbooks/chef_handler
+	url = git://github.com/opscode-cookbooks/chef_handler.git
+[submodule "cookbooks/unicorn"]
+	path = cookbooks/unicorn
+	url = git://github.com/opscode-cookbooks/unicorn.git
+[submodule "cookbooks/yum"]
+	path = cookbooks/yum
+	url = git://github.com/opscode-cookbooks/yum.git
+[submodule "cookbooks/passenger_apache2"]
+	path = cookbooks/passenger_apache2
+	url = git://github.com/opscode-cookbooks/passenger_apache2.git
+[submodule "cookbooks/apache2"]
+	path = cookbooks/apache2
+	url = git://github.com/opscode-cookbooks/apache2.git
