@@ -1,0 +1,15 @@
+{
+  "env_run_lists": {
+  },
+  "override_attributes": {
+  },
+  "name": "webserver",
+  "json_class": "Chef::Role",
+  "description": "",
+  "chef_type": "role",
+  "default_attributes": {
+  },
+  "run_list": [
+
+  ]
+}
