@@ -1,0 +1,18 @@
+{
+  "description": "",
+  "name": "base",
+  "env_run_lists": {
+  },
+  "run_list": [
+    "recipe[rvm::system_install]"
+  ],
+  "json_class": "Chef::Role",
+  "chef_type": "role",
+  "override_attributes": {
+    "rvm": {
+      "default_ruby" : "ruby-1.9.3-head"
+    }
+  },
+  "default_attributes": {
+  }
+}

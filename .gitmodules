@@ -43,3 +43,9 @@
 [submodule "cookbooks/apache2"]
 	path = cookbooks/apache2
 	url = git://github.com/opscode-cookbooks/apache2.git
+[submodule "cookbooks/chef_gem"]
+	path = cookbooks/chef_gem
+	url = git://github.com/hw-cookbooks/chef_gem.git
+[submodule "cookbooks/rvm"]
+	path = cookbooks/rvm
+	url = git://github.com/fnichol/chef-rvm.git
