@@ -49,3 +49,9 @@
 [submodule "cookbooks/rvm"]
 	path = cookbooks/rvm
 	url = git://github.com/fnichol/chef-rvm.git
+[submodule "cookbooks/mongodb"]
+	path = cookbooks/mongodb
+	url = git://github.com/edelight/chef-mongodb.git
+[submodule "cookbooks/apt"]
+	path = cookbooks/apt
+	url = git://github.com/opscode-cookbooks/apt.git
