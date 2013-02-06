@@ -41,22 +41,16 @@ rvm_shell 'rails3 asset pipeline' do
   code %{ cd #{current_path} && bundle exec rake assets:precompile }
 end
 
-
-unicorn_config "/etc/unicorn/blockstep.rb" do
-  listen 80 => {:tcp_nodelay => true, :backlog => 100 }
-  working_directory "/opt/blockstep/current"
-end
-
 directory "/tmp/keyz/.ssh" do
   owner "will"
   recursive true
 end
 
-file "/var/log/blockstep" do
-  action :create_if_missing
-  owner "root"
-  mode "0755"
-end
+# file "/var/log/blockstep" do
+#   action :create_if_missing
+#   owner "root"
+#   mode "0755"
+# end
 
 directory "/opt/blockstep/shared/templates" do
   owner "will"
@@ -83,6 +77,12 @@ cookbook_file "/tmp/keyz/ssh-wrapper.sh" do
   mode 0700
 end
 
+template "/etc/nginx/sites-available/com.blockstep" do
+  source "nginx/com.blockstep"
+  owner "root"
+  mode 0644
+end
+
 #deploy_revision "blockstep" do
 deploy "blockstep" do
 
@@ -103,6 +103,7 @@ deploy "blockstep" do
 
       code %{
         bundle install --deployment --without development test
+        sudo nxensite "com.blockstep"
       }
     end
   end
@@ -114,6 +115,5 @@ deploy "blockstep" do
   notifies :restart, resources("service[blockstep]"), :delayed
 
 end
-
 
 

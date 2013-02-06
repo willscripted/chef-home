@@ -1,0 +1,15 @@
+server {
+  listen   80;
+  server_name  324-234234-basebox;
+
+  access_log  /var/log/nginx/localhost.access.log;
+
+  location /assets {
+    root   /opt/blockstep/current/public;
+  }
+
+  location / {
+    proxy_pass   http://127.0.0.1:10000;
+  }
+}
+
