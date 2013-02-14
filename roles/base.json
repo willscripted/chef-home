@@ -1,18 +1,26 @@
 {
-  "description": "",
-  "name": "base",
-  "env_run_lists": {
+  "default_attributes": {
   },
+  "env_run_lists": {
+    "production": [
+      "recipe[apt]",
+      "recipe[rvm::system_install]"
+    ]
+  },
+  "chef_type": "role",
   "run_list": [
+    "recipe[apt]",
     "recipe[rvm::system_install]"
   ],
-  "json_class": "Chef::Role",
-  "chef_type": "role",
+  "description": "",
   "override_attributes": {
     "rvm": {
-      "default_ruby" : "ruby-1.9.3-head"
+      "default_ruby": "ruby-1.9.3-head"
+    },
+    "mongodb": {
+      "package_name": "mongodb"
     }
   },
-  "default_attributes": {
-  }
+  "json_class": "Chef::Role",
+  "name": "base"
 }
