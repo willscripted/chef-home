@@ -64,3 +64,8 @@ Next Steps
 ==========
 
 Read the README file in each of the subdirectories for more information about what goes in those directories.
+
+Notes
+=========
+
+Create a new production node: `knife bootstrap -r "role[base],role[webserver]" -x will 192.168.1.14 --sudo`

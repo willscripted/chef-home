@@ -8,6 +8,9 @@
 #
 
 package 'git'
+package 'mongodb-server' do
+  action :install
+end
 
 service "blockstep" do
   provider Chef::Provider::Service::Upstart
@@ -46,23 +49,31 @@ directory "/tmp/keyz/.ssh" do
   recursive true
 end
 
-# file "/var/log/blockstep" do
-#   action :create_if_missing
-#   owner "root"
-#   mode "0755"
-# end
-
 directory "/opt/blockstep/shared/templates" do
   owner "will"
   group "will"
-  mode "770"
+  mode "755"
+  recursive true
 end
 
 %w{master.conf.erb process.conf.erb process_master.conf.erb}.each do |f|
   template "/opt/blockstep/shared/templates/#{f}" do
+    owner "will"
     source "foreman/#{f}"
     variables :path => "/opt/blockstep/current", :ruby_version => "1.9.3"
   end
+end
+
+execute "chmod blockstep" do
+  command "chmod 755 /opt/blockstep -R && chown -R will:will /opt/blockstep"
+  user "root"
+end
+
+directory "/opt/blockstep/shared/log" do
+  owner "will"
+  group "will"
+  mode "777"
+  recursive true
 end
 
 cookbook_file "/tmp/keyz/.ssh/id_deploy" do
@@ -77,10 +88,18 @@ cookbook_file "/tmp/keyz/ssh-wrapper.sh" do
   mode 0700
 end
 
+execute "nginx site" do
+  command "nxensite com.blockstep && nxdissite default"
+  user "root"
+  action :nothing
+end
+
 template "/etc/nginx/sites-available/com.blockstep" do
   source "nginx/com.blockstep"
   owner "root"
   mode 0644
+
+  notifies :run,     resources("execute[nginx site]"), :immediate
 end
 
 #deploy_revision "blockstep" do
@@ -90,6 +109,7 @@ deploy "blockstep" do
   revision "master"
   environment "development"
   user "will"
+  group "will"
   deploy_to "/opt/blockstep"
   action :deploy
   ssh_wrapper "/tmp/keyz/ssh-wrapper.sh"
@@ -103,7 +123,6 @@ deploy "blockstep" do
 
       code %{
         bundle install --deployment --without development test
-        sudo nxensite "com.blockstep"
       }
     end
   end
