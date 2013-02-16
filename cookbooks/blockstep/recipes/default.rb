@@ -127,7 +127,7 @@ end
 deploy_revision "blockstep" do
 
   repo "git@github.com:will-ob/com.blockstep.git"
-  revision "master"
+  revision node["blockstep"]["branch"]
   user deploy_user
   group deploy_group
   deploy_to deploy_path
