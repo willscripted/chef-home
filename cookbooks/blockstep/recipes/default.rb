@@ -64,6 +64,19 @@ end
   end
 end
 
+directory "/opt/blockstep/shared/config" do
+  owner "will"
+  group "will"
+  mode "755"
+  recursive true
+end
+
+template "/opt/blockstep/shared/config/database.yml" do
+  owner "will"
+  source "database.yml.erb"
+  variables :port => 27017, :database => "blockstep-production", :host => "localhost"
+end
+
 execute "chmod blockstep" do
   command "chmod 755 /opt/blockstep -R && chown -R will:will /opt/blockstep"
   user "root"
@@ -89,7 +102,7 @@ cookbook_file "/tmp/keyz/ssh-wrapper.sh" do
 end
 
 execute "nginx site" do
-  command "nxensite com.blockstep && nxdissite default"
+  command "nxensite com.blockstep && nxdissite default && service restart nginx"
   user "root"
   action :nothing
 end
@@ -99,7 +112,6 @@ template "/etc/nginx/sites-available/com.blockstep" do
   owner "root"
   mode 0644
 
-  notifies :run,     resources("execute[nginx site]"), :immediate
 end
 
 #deploy_revision "blockstep" do
@@ -132,6 +144,7 @@ deploy "blockstep" do
 
   notifies :enable,  resources("service[blockstep]"), :delayed
   notifies :restart, resources("service[blockstep]"), :delayed
+  notifies :run,     resources("execute[nginx site]"), :delayed
 
 end
 
