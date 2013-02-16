@@ -124,8 +124,7 @@ template "/etc/nginx/sites-available/com.blockstep" do
   mode 0644
 end
 
-#deploy_revision "blockstep" do
-deploy "blockstep" do
+deploy_revision "blockstep" do
 
   repo "git@github.com:will-ob/com.blockstep.git"
   revision "master"
