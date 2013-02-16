@@ -7,6 +7,15 @@
 # All rights reserved - Do Not Redistribute
 #
 
+deploy_path = "/opt/blockstep"
+current_path = ::File.join(deploy_path, "current")
+
+key_dir = "/tmp/keyz"
+key_file = "ssh-wrapper.sh"
+
+deploy_user = "will"
+deploy_group = "will"
+
 package 'git'
 package 'mongodb-server' do
   action :install
@@ -18,91 +27,93 @@ service "blockstep" do
   action :nothing
 end
 
+
 rvm_shell 'procfile foreman export' do
   action :nothing
   ruby_string '1.9.3'
   user 'root'
 
-  current_path = '/opt/blockstep/current'
+  upstart_templates_dir = ::File.join(deploy_path, "shared/templates")
+  log_path = ::File.join(current_path, "log")
 
   foreman_options = ["foreman export upstart /etc/init"]
   foreman_options << "-a blockstep"
-  foreman_options << "-u will"
-  foreman_options << "-l /opt/blockstep/current/log"
+  foreman_options << "-u #{deploy_user}"
+  foreman_options << "-l #{log_path}"
   foreman_options << "-f Procfile"
-  foreman_options << "-t /opt/blockstep/shared/templates"
+  foreman_options << "-t #{upstart_templates_dir}"
 
   code %{ cd #{current_path} && HOME=/root bundle exec #{foreman_options.join(" ")} }
 
 end
+
 rvm_shell 'rails3 asset pipeline' do
   action :nothing
   ruby_string '1.9.3'
-  user 'will'
+  user deploy_user
 
-  current_path = '/opt/blockstep/current'
   code %{ cd #{current_path} && bundle exec rake assets:precompile }
 end
 
-directory "/tmp/keyz/.ssh" do
-  owner "will"
+directory ::File.join(key_dir, ".ssh") do
+  owner deploy_user
   recursive true
 end
 
-directory "/opt/blockstep/shared/templates" do
-  owner "will"
-  group "will"
+directory ::File.join(deploy_path, "shared/templates") do
+  owner deploy_user
+  group deploy_group
   mode "755"
   recursive true
 end
 
 %w{master.conf.erb process.conf.erb process_master.conf.erb}.each do |f|
-  template "/opt/blockstep/shared/templates/#{f}" do
-    owner "will"
+  template ::File.join(deploy_path, "shared/templates/#{f}") do
+    owner deploy_user
     source "foreman/#{f}"
-    variables :path => "/opt/blockstep/current", :ruby_version => "1.9.3"
+    variables :path => current_path, :ruby_version => "1.9.3"
   end
 end
 
-directory "/opt/blockstep/shared/config" do
-  owner "will"
-  group "will"
+directory ::File.join(deploy_path, "shared/config") do
+  owner deploy_user
+  group deploy_group
   mode "755"
   recursive true
 end
 
-template "/opt/blockstep/shared/config/database.yml" do
-  owner "will"
+template ::File.join(deploy_path, "shared/config/database.yml") do
+  owner deploy_user
   source "database.yml.erb"
   variables :port => 27017, :database => "blockstep-production", :host => "localhost"
 end
 
 execute "chmod blockstep" do
-  command "chmod 755 /opt/blockstep -R && chown -R will:will /opt/blockstep"
+  command "chmod 755 #{deploy_path} -R && chown -R #{deploy_user}:#{deploy_group} #{deploy_path}"
   user "root"
 end
 
-directory "/opt/blockstep/shared/log" do
-  owner "will"
-  group "will"
+directory ::File.join(deploy_path, "shared/log") do
+  owner deploy_user
+  group deploy_group
   mode "777"
   recursive true
 end
 
-cookbook_file "/tmp/keyz/.ssh/id_deploy" do
+cookbook_file ::File.join(key_dir, ".ssh/id_deploy") do
   source "id_deploy"
-  owner "will"
+  owner deploy_user
   mode 0600
 end
 
-cookbook_file "/tmp/keyz/ssh-wrapper.sh" do
-  source "ssh-wrapper.sh"
-  owner "will"
+cookbook_file ::File.join(key_dir, key_file) do
+  source key_file
+  owner deploy_user
   mode 0700
 end
 
 execute "nginx site" do
-  command "nxensite com.blockstep && nxdissite default && service restart nginx"
+  command "nxensite com.blockstep && nxdissite default && service nginx restart"
   user "root"
   action :nothing
 end
@@ -111,7 +122,6 @@ template "/etc/nginx/sites-available/com.blockstep" do
   source "nginx/com.blockstep"
   owner "root"
   mode 0644
-
 end
 
 #deploy_revision "blockstep" do
@@ -119,18 +129,16 @@ deploy "blockstep" do
 
   repo "git@github.com:will-ob/com.blockstep.git"
   revision "master"
-  environment "development"
-  user "will"
-  group "will"
-  deploy_to "/opt/blockstep"
+  user deploy_user
+  group deploy_group
+  deploy_to deploy_path
   action :deploy
-  ssh_wrapper "/tmp/keyz/ssh-wrapper.sh"
-
+  ssh_wrapper ::File.join(key_dir, key_file)
 
   before_symlink do
     rvm_shell 'procfile bundle install' do
       ruby_string '1.9.3'
-      user 'will'
+      user deploy_user
       cwd release_path
 
       code %{
