@@ -7,7 +7,14 @@
   },
   "override_attributes": {
     "blockstep": {
-      "branch": "develop"
+      "branch": "develop",
+      "hostname": "dev.blockstep.com",
+      "env" : {
+        "env":"production",
+        "port":"10000",
+        "gauth_id": "411311654177-64ffv8ejp8dqra0d8un3ckdceq92a0ma.apps.googleusercontent.com",
+        "gauth_secret":"XMLbxErdYLb9kNf_8cU1wjBk"
+      }
     }
   },
   "name": "staging",

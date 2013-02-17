@@ -1,6 +1,11 @@
+upstream blockstep {
+  server 127.0.0.1:<%= @port %>;
+}
+
+
 server {
   listen   80;
-  server_name  324-234234-basebox;
+  server_name  <%= @name %>;
 
   access_log  /var/log/nginx/localhost.access.log;
 
@@ -9,7 +14,9 @@ server {
   }
 
   location / {
-    proxy_pass   http://127.0.0.1:10000;
+    proxy_pass   http://blockstep;
+
+    proxy_set_header    Host    $host;
   }
 }
 

@@ -38,6 +38,7 @@ rvm_shell 'procfile foreman export' do
 
   foreman_options = ["foreman export upstart /etc/init"]
   foreman_options << "-a blockstep"
+  foreman_options << "-e .env"
   foreman_options << "-u #{deploy_user}"
   foreman_options << "-l #{log_path}"
   foreman_options << "-f Procfile"
@@ -112,28 +113,42 @@ cookbook_file ::File.join(key_dir, key_file) do
   mode 0700
 end
 
-execute "nginx site" do
-  command "nxensite com.blockstep && nxdissite default && service nginx restart"
-  user "root"
-  action :nothing
-end
 
 template "/etc/nginx/sites-available/com.blockstep" do
-  source "nginx/com.blockstep"
+  source "nginx/com.blockstep.erb"
   owner "root"
   mode 0644
+
+  variables({
+    :port => node["blockstep"]["env"]["port"], 
+    :name => node["blockstep"]["hostname"]
+  })
+end
+
+execute "nginx site" do
+  command "nxensite com.blockstep && nxdissite default || true  && service nginx restart"
+  user "root"
+end
+
+template ::File.join(deploy_path, "shared/env") do
+  source "env.erb"
+  variables :env => node["blockstep"]["env"]
+
+  notifies :run, resources("rvm_shell[procfile foreman export]"), :delayed
+  notifies :restart, resources("service[blockstep]"), :delayed
 end
 
 deploy_revision "blockstep" do
 
+  action :force_deploy
   repo "git@github.com:will-ob/com.blockstep.git"
   revision node["blockstep"]["branch"]
   user deploy_user
   group deploy_group
   deploy_to deploy_path
-  action :deploy
   ssh_wrapper ::File.join(key_dir, key_file)
 
+  symlinks({'env' => '.env' })
   before_symlink do
     rvm_shell 'procfile bundle install' do
       ruby_string '1.9.3'

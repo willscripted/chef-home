@@ -4,6 +4,16 @@
   "override_attributes": {
   },
   "default_attributes": {
+    "blockstep": {
+      "branch": "master",
+      "hostname":"www.blockstep.com",
+      "env" : {
+        "env":"production",
+        "port":"10000",
+        "gauth_id": "411311654177.apps.googleusercontent.com",
+        "gauth_secret":"m1Q3uVZ9N6BExtF_RtFWlnDg"
+      }
+    }
   },
   "chef_type": "environment",
   "name": "production",
