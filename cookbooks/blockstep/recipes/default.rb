@@ -86,7 +86,11 @@ end
 template ::File.join(deploy_path, "shared/config/database.yml") do
   owner deploy_user
   source "database.yml.erb"
-  variables :port => 27017, :database => "blockstep-production", :host => "localhost"
+  variables({
+    :port     => node["blockstep"]["database"]["port"],
+    :database => node["blockstep"]["database"]["name"],
+    :host     => node["blockstep"]["database"]["host"]
+  })
 end
 
 execute "chmod blockstep" do
@@ -166,6 +170,7 @@ deploy_revision "blockstep" do
 
   notifies :enable,  resources("service[blockstep]"), :delayed
   notifies :restart, resources("service[blockstep]"), :delayed
+
   notifies :run,     resources("execute[nginx site]"), :delayed
 
 end

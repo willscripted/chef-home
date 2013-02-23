@@ -9,6 +9,10 @@
     "blockstep": {
       "branch": "develop",
       "hostname": "dev.blockstep.com",
+      "database": {
+        "name": "blockstep-staging",
+        "host" : "localhost"
+      },
       "env" : {
         "env":"production",
         "port":"10000",

@@ -7,6 +7,10 @@
     "blockstep": {
       "branch": "master",
       "hostname":"www.blockstep.com",
+      "database": {
+        "name": "blockstep-production",
+        "host" : "localhost"
+      },
       "env" : {
         "env":"production",
         "port":"10000",
