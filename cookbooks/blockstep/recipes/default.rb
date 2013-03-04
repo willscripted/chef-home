@@ -10,6 +10,8 @@
 deploy_path = "/opt/blockstep"
 current_path = ::File.join(deploy_path, "current")
 
+ruby_version = '2.0.0'
+
 key_dir = "/tmp/keyz"
 key_file = "ssh-wrapper.sh"
 
@@ -30,7 +32,7 @@ end
 
 rvm_shell 'procfile foreman export' do
   action :nothing
-  ruby_string '1.9.3'
+  ruby_string ruby_version
   user 'root'
 
   upstart_templates_dir = ::File.join(deploy_path, "shared/templates")
@@ -50,7 +52,7 @@ end
 
 rvm_shell 'rails3 asset pipeline' do
   action :nothing
-  ruby_string '1.9.3'
+  ruby_string ruby_version
   user deploy_user
 
   code %{ cd #{current_path} && bundle exec rake assets:precompile }
@@ -155,7 +157,7 @@ deploy_revision "blockstep" do
   symlinks({'env' => '.env' })
   before_symlink do
     rvm_shell 'procfile bundle install' do
-      ruby_string '1.9.3'
+      ruby_string ruby_version
       user deploy_user
       cwd release_path
 
