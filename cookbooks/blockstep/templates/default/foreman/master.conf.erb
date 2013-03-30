@@ -5,10 +5,15 @@ EOF
 
 end script
 
-start on (started network-interface
-          or started network-manager
-          or started networking)
 
-stop on (stopping network-interface
-         or stopping network-manager
-         or stopping networking)
+start on (net-device-up
+          and local-filesystems
+          and runlevel [2345])
+
+stop on [!2345]
+
+post-stop script
+
+sleep 2
+
+end script
